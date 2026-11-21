@@ -110,6 +110,8 @@ Read [FAQs](./Manual/) and avoid asking any questions. No support is provided fo
 | `-igfxsklaskbl` 	| N/A 	| Enforce Kaby Lake (KBL) graphics kext being loaded and used on Skylake models (KBL `device-id` and `ig-platform-id` are required. Not required on macOS 13 and above) 	|
 | `-igfxtypec` 		 	| N/A 	| Force DP connectivity for Type-C platforms 	|
 | `-igfxvesa` 		  | N/A 	| Disable Intel Graphics acceleration 	|
+| `igfxhpdafix=1` | N/A | Enable the opt-in SKL/KBL HPD-A fix in this fork. Disabled by default. [Usage and Debug](./Manual/KBLDisplayFixes.md) |
+| `igfxcdclkfix=1` | N/A | Enable one native display-engine reinitialization during initial modesetting when CDCLK is below the supported native target. Disabled by default. [Usage and Debug](./Manual/KBLDisplayFixes.md) |
 | `igfxagdc=0` 		  | `disable-agdc` property on IGPU 	| Disable AGDC 	|
 | `igfxfcms=1` 		  | `complete-modeset` property on IGPU 	| Force complete modeset on Skylake or Apple firmwares 	|
 | `igfxfcmsfbs=` 	  | `complete-modeset-framebuffers` property on IGPU 	| Specify indices of connectors for which complete modeset must be enforced. Each index is a byte in a 64-bit word; for example, value `0x010203` specifies connectors 1, 2, 3. If a connector is not in the list, the driver's logic is used to determine whether complete modeset is needed. Pass `-1` to disable.  	|

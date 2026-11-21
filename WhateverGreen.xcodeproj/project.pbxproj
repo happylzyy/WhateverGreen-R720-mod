@@ -47,6 +47,7 @@
 		D531F20E26BF52CA00224998 /* kern_igfx_backlight.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D531F20C26BF52CA00224998 /* kern_igfx_backlight.hpp */; };
 		D5C32F5624FC45D30078A824 /* kern_igfx_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D5C32F5524FC45D30078A824 /* kern_igfx_memory.cpp */; };
 		E2BE6CE220FB209400ED2D55 /* kern_fb.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E2BE6CE120FB209400ED2D55 /* kern_fb.hpp */; };
+		E6A9E5CF8694A963874404D9 /* kern_kbl_display.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B7D28FA6551AA33B72EBA428 /* kern_kbl_display.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +156,13 @@
 		D531F20C26BF52CA00224998 /* kern_igfx_backlight.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kern_igfx_backlight.hpp; sourceTree = "<group>"; };
 		D5C32F5524FC45D30078A824 /* kern_igfx_memory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = kern_igfx_memory.cpp; sourceTree = "<group>"; };
 		E2BE6CE120FB209400ED2D55 /* kern_fb.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kern_fb.hpp; sourceTree = "<group>"; };
+		26FCDD442599A41088D05927 /* kern_kbl_abi.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_kbl_abi.hpp; sourceTree = "<group>"; };
+		3B4CD7747CA1FE6F638E1A0E /* kern_kbl_checks.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_kbl_checks.hpp; sourceTree = "<group>"; };
+		FEF25E6AB8A2499D45A73913 /* kern_kbl_decoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_kbl_decoder.hpp; sourceTree = "<group>"; };
+		B7D28FA6551AA33B72EBA428 /* kern_kbl_display.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = kern_kbl_display.cpp; sourceTree = "<group>"; };
+		9876ABCDBF2F65156B69A773 /* kern_kbl_display.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_kbl_display.hpp; sourceTree = "<group>"; };
+		A55F757A0B2350261344DC90 /* kern_kbl_hpda.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_kbl_hpda.hpp; sourceTree = "<group>"; };
+		B1E8E3ADBF6E7E79AF065A3C /* kern_kbl_sha256.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_kbl_sha256.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +220,13 @@
 				CE766ED4210763B200A84567 /* kern_guc.cpp */,
 				CE766ED5210763B200A84567 /* kern_guc.hpp */,
 				CE7FC0AC20F5622700138088 /* kern_igfx.cpp */,
+				B1E8E3ADBF6E7E79AF065A3C /* kern_kbl_sha256.hpp */,
+				A55F757A0B2350261344DC90 /* kern_kbl_hpda.hpp */,
+				9876ABCDBF2F65156B69A773 /* kern_kbl_display.hpp */,
+				B7D28FA6551AA33B72EBA428 /* kern_kbl_display.cpp */,
+				FEF25E6AB8A2499D45A73913 /* kern_kbl_decoder.hpp */,
+				3B4CD7747CA1FE6F638E1A0E /* kern_kbl_checks.hpp */,
+				26FCDD442599A41088D05927 /* kern_kbl_abi.hpp */,
 				CE7FC0AD20F5622700138088 /* kern_igfx.hpp */,
 				D531F20B26BF52CA00224998 /* kern_igfx_backlight.cpp */,
 				D531F20C26BF52CA00224998 /* kern_igfx_backlight.hpp */,
@@ -483,6 +498,7 @@
 			files = (
 				D515168325195D58003CF0E6 /* kern_igfx_i2c_aux.cpp in Sources */,
 				CE7FC0AE20F5622700138088 /* kern_igfx.cpp in Sources */,
+				E6A9E5CF8694A963874404D9 /* kern_kbl_display.cpp in Sources */,
 				CEC8E2F020F765E700D3CA3A /* kern_cdf.cpp in Sources */,
 				D5224EF125172B2500D5CF16 /* kern_igfx_clock.cpp in Sources */,
 				1C9CB7B01C789FF500231E41 /* kern_rad.cpp in Sources */,

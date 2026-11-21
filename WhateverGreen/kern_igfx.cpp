@@ -18,6 +18,9 @@
 
 #include <IOKit/pci/IOPCIDevice.h>
 
+#include "kern_kbl_display.hpp"
+static bool kblNativeModesetOnly = false;
+
 IGFX *IGFX::callbackIGFX;
 
 void IGFX::init() {
@@ -158,6 +161,7 @@ void IGFX::init() {
 }
 
 void IGFX::deinit() {
+	KBLDisplay::deinit();
 	// Deinitialize each submodule
 	for (auto submodule : submodules)
 		submodule->deinit();
@@ -166,6 +170,7 @@ void IGFX::deinit() {
 }
 
 void IGFX::processKernel(KernelPatcher &patcher, DeviceInfo *info) {
+	KBLDisplay::select(info);
 	bool switchOffGraphics = false;
 	bool switchOffFramebuffer = false;
 	framebufferPatch.framebufferId = info->reportedFramebufferId;
@@ -220,6 +225,11 @@ void IGFX::processKernel(KernelPatcher &patcher, DeviceInfo *info) {
 		// We first iterate through each submodule and redirect the request
 		for (auto submodule : submodules)
 			submodule->processKernel(patcher, info);
+		if (KBLDisplay::cdclkRequested() && modForceCompleteModeset.supported &&
+			(currentFramebuffer==&kextIntelKBLFb || currentFramebufferOpt==&kextIntelKBLFb)) {
+			kblNativeModesetOnly = !modForceCompleteModeset.enabled;
+			modForceCompleteModeset.enabled = true;
+		}
 		
 		// Then process shared submodules
 		// A shared submodule will disable itself if no active submodule depends on it
@@ -236,6 +246,7 @@ void IGFX::processKernel(KernelPatcher &patcher, DeviceInfo *info) {
 		
 		// Ideally, we could get rid of these two lambda expressions
 		auto requiresFramebufferPatches = [this]() {
+			if (KBLDisplay::hpdRequested() || KBLDisplay::cdclkRequested()) return true;
 			if (applyFramebufferPatch || hdmiAutopatch)
 				return true;
 			if (dumpFramebufferToDisk || dumpPlatformTable)
@@ -329,6 +340,13 @@ bool IGFX::processKext(KernelPatcher &patcher, size_t index, mach_vm_address_t a
 
 	if ((currentFramebuffer && currentFramebuffer->loadIndex == index) ||
 		(currentFramebufferOpt && currentFramebufferOpt->loadIndex == index)) {
+		if (index==kextIntelKBLFb.loadIndex) {
+			KBLDisplay::applyHPD(patcher,index,address,size,&kextIntelKBLFb);
+			if (KBLDisplay::cdclkRequested()) {
+				const bool ready=KBLDisplay::prepare(patcher,index,address,size);
+				if (kblNativeModesetOnly && !ready) modForceCompleteModeset.enabled=false;
+			}
+		}
 		
 		// Note that the order is reversed at this stage
 		// We first process shared submodules
@@ -342,6 +360,8 @@ bool IGFX::processKext(KernelPatcher &patcher, size_t index, mach_vm_address_t a
 		for (auto submodule : submodules)
 			if (submodule->enabled)
 				submodule->processFramebufferKext(patcher, index, address, size);
+		if (KBLDisplay::cdclkRequested() && index==kextIntelKBLFb.loadIndex)
+			KBLDisplay::install(patcher,index,address,size);
 
 		if (applyFramebufferPatch || dumpFramebufferToDisk || dumpPlatformTable || hdmiAutopatch) {
 			framebufferStart = reinterpret_cast<uint8_t *>(address);
@@ -639,11 +659,17 @@ void IGFX::ForceCompleteModeset::processFramebufferKext(KernelPatcher &patcher, 
 		orgHwRegsNeedUpdate
 	};
 	
-	if (!patcher.routeMultiple(index, &request, 1, address, size))
+	const bool routed=patcher.routeMultiple(index, &request, 1, address, size);
+	if (KBLDisplay::cdclkRequested() && index==kextIntelKBLFb.loadIndex)
+		KBLDisplay::modesetRouteReady(routed && orgHwRegsNeedUpdate);
+	if (!routed)
 		SYSLOG("igfx", "FCM: Failed to route the function hwRegsNeedUpdate.");
 }
 
 bool IGFX::ForceCompleteModeset::wrapHwRegsNeedUpdate(void *controller, IORegistryEntry *framebuffer, void *displayPath, void *crtParams, void *detailedInfo) {
+	if (KBLDisplay::forceModeUpdate(controller,framebuffer)) return true;
+	if (kblNativeModesetOnly)
+		return callbackIGFX->modForceCompleteModeset.orgHwRegsNeedUpdate(controller,framebuffer,displayPath,crtParams,detailedInfo);
 	// The framebuffer controller can perform panel fitter, partial, or a
 	// complete modeset (see AppleIntelFramebufferController::hwSetMode).
 	// In a dual-monitor CFL DVI+HDMI setup, only HDMI output was working after
